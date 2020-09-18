@@ -40,11 +40,17 @@
   padding-bottom: 0.5em;
 }
 
+button{
+  border: none;
+  outline: none;
+}
+
 .result-display {
   padding: 1em;
   margin-bottom: 1em;
   border-radius: 0.5em;
   background-color: #61dafb;
+  text-align: right;
 }
 
 .grid-holder{
@@ -63,15 +69,28 @@
 .AC {
   background-color: #fb6961;
 }
+.AC:hover {
+  background-color: #dd4b43;
+}
 
 .number {
   background-color: #e4f1f5;
+}
+.number:hover {
+  background-color: #c6d3d7;
 }
 
 .operator {
   background-color: #fbb661;
 }
+.operator:hover {
+  background-color: #dd9843;
+}
 
 .equal {
   background-color: #61dafb;
+}
+
+.equal:hover {
+  background-color: #43bcdd;
 }
