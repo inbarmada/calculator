@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #bdbdbd;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -24,15 +24,54 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.calc-body {
+  background-color: #282c34;
+  border-radius: 1em;
+  padding: 1em;
+  grid-gap: 0.2em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.cell {
+  background-color: #ffffff;
+  color: black;
+  min-width: 4em;
+  border-radius: 0.3em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.result-display {
+  padding: 1em;
+  margin-bottom: 1em;
+  border-radius: 0.5em;
+  background-color: #61dafb;
+}
+
+.grid-holder{
+  display: grid;
+  grid-template-areas:
+    "AC AC divide mult"
+    "seven eight nine minus"
+    "four five six plus"
+    "one two three equal"
+    "zero zero dec equal";
+  grid-gap: 0.2em;
+  min-height: 30vh;
+  min-width: 20vw;
+}
+
+.AC {
+  background-color: #fb6961;
+}
+
+.number {
+  background-color: #e4f1f5;
+}
+
+.operator {
+  background-color: #fbb661;
+}
+
+.equal {
+  background-color: #61dafb;
 }
