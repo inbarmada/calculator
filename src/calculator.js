@@ -9,27 +9,30 @@ class Calculator extends React.Component{
     this.handleOperator = this.handleOperator.bind(this);
     this.handleAC = this.handleAC.bind(this);
     this.numberCompleted = this.numberCompleted.bind(this);
+    this.addOperator = this.addOperator.bind(this);
   }
 
   initializeState() {
     this.state = {
-      entered: [],
+      entered: '',
       currentNumber: '',
       lastOperator: '',
       display: '0',
-      lastNumber: ''
+      lastEntered: ''
     }
   }
 
-
+  /* REPLACE lastOperator WITH
+  lastEntered WHICH WILL HOLD 'NUM' OR 'OP'. REPLACE
+  entered ARRAY WITH A STRING OF EVERYTHING ENTERED.
+  EVALUATE USING EVAL */
 
   cleanState() {
     this.setState({
-      entered: [],
+      entered: '',
       currentNumber: '',
       lastOperator: '',
       display: '0',
-      lastNumber: ''
     });
   }
 
@@ -44,79 +47,33 @@ class Calculator extends React.Component{
     console.log(this.state.currentNumber);
   }
 
-  numberCompleted() {
+  numberCompleted(func, arg) {
     // check that number is valid
-    if (this.state.currentNumber != '') {
-      let len = this.state.entered.length;
+    console.log('num completed', this.state.currentNumber);
 
-      // if start of new expression, clear entered first.
-      if (typeof this.state.entered[len - 1] == 'number') {
-        this.setState((state) => {return {
-          entered:  [parseFloat(state.currentNumber)]
-        }});
-      }
-      // otherwise add number to end of entered
-      else {
-        this.setState((state) => {return {
-          entered:  [...state.entered,
-            parseFloat(state.currentNumber)]
-        }});
-      }
-
-    }
   }
 
-  evaluate(num1, op, num2) {
-    // evaluate an expression given two numbers and an operator
-    let val = 0;
-
-    if (op === '-') {
-      val = num1 - num2;
-    }
-    else if (op === '+') {
-      val = num1 + num2;
-    }
-    else if (op === '*') {
-      val = num1 * num2;
-    }
-    else if (op === '/') {
-      val = num1 / num2;
-    }
-
-    return val;
-  }
-
-  evaluateTop() {
-    // evaluate top expression from state.entered
-    let length = this.state.entered.length;
-    // check that expression exists
-    if (length < 3) {
-      return this.state.display;
-    }
-    let num1 = this.state.entered[length - 3];
-    let op = this.state.entered[length - 2];
-    let num2 = this.state.entered[length - 1];
-    console.log(num1, op, num2);
-    let val = this.evaluate(num1, op, num2);
+  evaluate() {
+    let val = eval(this.state.entered);
     return val;
   }
 
   handleEquals(event) {
-    this.setState((state) => {return {
-        entered:  [...state.entered,
-                  parseFloat(state.currentNumber)]
-      }},
-      () => {
-        this.printState();
-        let val = this.evaluateTop();
-        let length = this.state.entered.length;
-        this.setState((state) => {return {
-          display: val + '',
-          entered: [...state.entered.splice(0, length - 3), val],
-          currentNumber: ''
-        }})
-      }
-    );
+    if (this.state.currentNumber != '') {
+      this.setState((state) => {return {
+          entered:  state.entered + state.currentNumber
+        }},
+        () => {
+          this.printState();
+          let val = this.evaluate();
+          this.setState((state) => {return {
+            display: val + '',
+            entered: val,
+            currentNumber: ''
+          }})
+        }
+      );
+    }
   }
 
   handleAC(event) {
@@ -124,31 +81,56 @@ class Calculator extends React.Component{
   }
 
   handleOperator(event) {
-    this.numberCompleted();
+    if (this.state.lastEntered != 'NUMBER') {
+      this.setState((state) => { return {
+        lastOperator: state.currentNumber,
+        currentNumber: '',
+        entered: state.entered + state.currentNumber,
+        lastEntered: 'NUMBER'
+      }},
+      this.addOperator(event));
+    }
+
+    else {
+      let len = this.state.entered.length;
+      this.setState((state) => { return {
+        lastOperator: state.currentNumber,
+        currentNumber: '',
+        entered: state.currentNumber,
+        lastEntered: 'NUMBER'
+      }},
+      this.addOperator(event));
+    }
+
+  }
+
+  addOperator(event) {
     let val = event.target.value;
-    let len = this.state.entered.length;
-    let lastEntered = this.state.entered[len];
-    if (typeof lastEntered == 'number') {
+    console.log("last", this.state.lastEntered);
+    if (this.state.lastEntered == 'NUMBER') {
       this.setState((state) => { return {
         lastOperator: val,
         currentNumber: '',
-        entered: [val]
+        entered: state.entered + val,
+        lastEntered: 'OPERATOR'
       }});
     } else {
+      let len = this.state.entered.length;
       this.setState((state) => { return {
         lastOperator: val,
         currentNumber: '',
-        entered: [...state.entered, val]
+        entered: state.entered.substring(0, len - 1) + val,
+        lastEntered: 'OPERATOR'
       }});
     }
 
-    console.log(this.state.lastOperator);
+    console.log(this.state.entered);
   }
 
   render() {
     return <div className="calc-body">
       <div className="cell result-display">
-        {this.state.display}
+        {this.state.entered}
       </div>
       <div className="grid-holder">
         <button className="cell AC" onClick={this.handleAC} style={{gridArea: "AC"}}>AC</button>
@@ -182,7 +164,6 @@ class Calculator extends React.Component{
     console.log('currentNumber', this.state.currentNumber);
     console.log('lastOperator', this.state.lastOperator);
     console.log('display', this.state.display);
-    console.log('lastNumber', this.state.lastNumber);
   }
 }
 
